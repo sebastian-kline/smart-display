@@ -1,7 +1,10 @@
 import express from "express";
+import cors from "cors";
 import fs from "fs";
 
 const app = express();
+
+app.use(cors());
 
 app.get("/api/cpu-temp", (req, res) => {
     fs.readFile(

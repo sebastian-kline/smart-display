@@ -28,7 +28,7 @@ function App() {
       const interval = setInterval(fetchTemp, 5000);
 
       return () => clearInterval(interval);
-      }, []);
+  }, []);
 
   return (
       <div className="app">
