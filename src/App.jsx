@@ -5,6 +5,8 @@ import "./App.css";
 function App() {
   const [time, setTime] = useState(new Date());
 
+  const [cpuTemp, setCpuTemp] = useState("--");
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
@@ -12,6 +14,21 @@ function App() {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+
+      const fetchTemp = () => {
+          fetch("http://localhost:3001/api/cpu-temp")
+              .then(r => r.json())
+              .then(data => setCpuTemp(data.temp));
+      };
+
+      fetchTemp();
+
+      const interval = setInterval(fetchTemp, 5000);
+
+      return () => clearInterval(interval);
+      }, []);
 
   return (
       <div className="app">
@@ -91,9 +108,8 @@ function App() {
         </div>
 
         {/* Bottom Left */}
-
         <div className="cpu">
-          CPU -- °C
+            CPU {cpuTemp}°C
         </div>
 
       </div>
