@@ -33,3 +33,11 @@ textarea,
 select {
     font: inherit;
 }
+
+/* The smart display is touchscreen-only, so a pointer should never appear. */
+html,
+body,
+#root,
+#root * {
+    cursor: none !important;
+}
