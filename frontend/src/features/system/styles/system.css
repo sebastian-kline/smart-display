@@ -1,0 +1,22 @@
+.status-bar {
+    position: absolute;
+    z-index: var(--layer-content);
+
+    bottom: var(--page-padding);
+    left: var(--page-padding);
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-medium);
+}
+
+.cpu-temperature {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-status);
+    font-weight: 500;
+    line-height: 1;
+    text-shadow: var(--text-shadow);
+}
+.cpu-temperature--stale {
+    opacity: 0.55;
+}
