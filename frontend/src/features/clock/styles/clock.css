@@ -15,7 +15,7 @@
     align-items: flex-start;
     justify-content: center;
 
-    font-size: calc(var(--font-size-clock) * 1.18);
+    font-size: calc(var(--font-size-clock) * 1.25);
     font-weight: 650;
     line-height: 0.9;
     letter-spacing: -0.06em;
