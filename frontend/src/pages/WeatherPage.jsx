@@ -40,7 +40,11 @@ function WeatherPage() {
                     className="weather-page__back"
                     type="button"
                     aria-label="Return home"
-                    onClick={() => navigate("/")}
+                    onClick={() =>
+                        navigate("/", {
+                            replace: true,
+                        })
+                    }
                 >
                     <BackIcon />
                 </button>

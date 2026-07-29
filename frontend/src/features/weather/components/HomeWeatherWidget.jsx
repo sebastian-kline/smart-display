@@ -16,7 +16,11 @@ function HomeWeatherWidget() {
             className="home-weather-widget"
             type="button"
             aria-label="Open weather"
-            onClick={() => navigate("/weather")}
+            onClick={() =>
+                navigate("/weather", {
+                    replace: true,
+                })
+            }
         >
             <WeatherIcon
                 conditionKey={currentWeather?.condition?.key}
