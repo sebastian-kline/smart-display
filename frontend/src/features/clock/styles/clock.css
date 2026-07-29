@@ -9,10 +9,38 @@
 }
 
 .clock-display__time {
-    font-size: var(--font-size-clock);
+    position: relative;
+
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    font-size: calc(var(--font-size-clock) * 1.18);
     font-weight: 650;
-    line-height: 0.95;
+    line-height: 0.9;
     letter-spacing: -0.06em;
+}
+
+.clock-display__time-value {
+    display: block;
+}
+
+/*
+ * A raised dot replaces the usual PM label.
+ * Nothing is displayed during AM hours.
+ */
+.clock-display__pm-dot {
+    flex: 0 0 auto;
+
+    width: 0.13em;
+    height: 0.13em;
+    margin-top: 0.08em;
+    margin-left: 0.11em;
+
+    background: currentColor;
+    border-radius: 50%;
+
+    box-shadow: var(--text-shadow);
 }
 
 .clock-display__date {
