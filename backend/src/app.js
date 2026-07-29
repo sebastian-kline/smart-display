@@ -5,6 +5,7 @@ import {
     notFoundHandler,
 } from "./middleware/errorHandlers.js";
 import systemRouter from "./routes/systemRoutes.js";
+import weatherRouter from "./routes/weatherRoutes.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/api/health", (_request, response) => {
 });
 
 app.use("/api/system", systemRouter);
+app.use("/api/weather", weatherRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
