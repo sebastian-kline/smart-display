@@ -12,6 +12,8 @@ import {
     updateSystemVolume,
 } from "../services/settingsService.js";
 
+const MINIMUM_BRIGHTNESS_PERCENT = 15;
+
 function clampPercentage(value, minimum = 0) {
     return Math.min(
         100,
@@ -63,9 +65,17 @@ function useSettingsControls() {
 
                 savedBrightnessRef.current =
                     settings.brightnessPercent;
-                savedVolumeRef.current = settings.volumePercent;
 
-                setBrightnessPercent(settings.brightnessPercent);
+                savedVolumeRef.current =
+                    settings.volumePercent;
+
+                setBrightnessPercent(
+                    clampPercentage(
+                        settings.brightnessPercent,
+                        MINIMUM_BRIGHTNESS_PERCENT,
+                    ),
+                );
+
                 setVolumePercent(settings.volumePercent);
             } catch (error) {
                 if (
@@ -104,9 +114,17 @@ function useSettingsControls() {
 
             savedBrightnessRef.current =
                 settings.brightnessPercent;
-            savedVolumeRef.current = settings.volumePercent;
 
-            setBrightnessPercent(settings.brightnessPercent);
+            savedVolumeRef.current =
+                settings.volumePercent;
+
+            setBrightnessPercent(
+                clampPercentage(
+                    settings.brightnessPercent,
+                    MINIMUM_BRIGHTNESS_PERCENT,
+                ),
+            );
+
             setVolumePercent(settings.volumePercent);
         } catch (error) {
             console.error(
@@ -114,14 +132,19 @@ function useSettingsControls() {
                 error,
             );
 
-            setErrorMessage("Unable to load system settings.");
+            setErrorMessage(
+                "Unable to load system settings.",
+            );
         } finally {
             setIsLoading(false);
         }
     }, []);
 
     async function commitBrightness(value) {
-        const nextValue = clampPercentage(value, 10);
+        const nextValue = clampPercentage(
+            value,
+            MINIMUM_BRIGHTNESS_PERCENT,
+        );
 
         if (
             nextValue === savedBrightnessRef.current ||
@@ -138,15 +161,29 @@ function useSettingsControls() {
                 await updateDisplayBrightness(nextValue);
 
             savedBrightnessRef.current = savedValue;
-            setBrightnessPercent(savedValue);
+
+            setBrightnessPercent(
+                clampPercentage(
+                    savedValue,
+                    MINIMUM_BRIGHTNESS_PERCENT,
+                ),
+            );
         } catch (error) {
             console.error(
                 "Unable to update brightness:",
                 error,
             );
 
-            setBrightnessPercent(savedBrightnessRef.current);
-            setErrorMessage("Unable to update brightness.");
+            setBrightnessPercent(
+                clampPercentage(
+                    savedBrightnessRef.current,
+                    MINIMUM_BRIGHTNESS_PERCENT,
+                ),
+            );
+
+            setErrorMessage(
+                "Unable to update brightness.",
+            );
         } finally {
             setIsSavingBrightness(false);
         }
@@ -172,10 +209,15 @@ function useSettingsControls() {
             savedVolumeRef.current = savedValue;
             setVolumePercent(savedValue);
         } catch (error) {
-            console.error("Unable to update volume:", error);
+            console.error(
+                "Unable to update volume:",
+                error,
+            );
 
             setVolumePercent(savedVolumeRef.current);
-            setErrorMessage("Unable to update volume.");
+            setErrorMessage(
+                "Unable to update volume.",
+            );
         } finally {
             setIsSavingVolume(false);
         }

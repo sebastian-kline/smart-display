@@ -100,7 +100,7 @@ function SettingsPanel({ onClose }) {
                                 <RangeSetting
                                     id="brightness-setting"
                                     label="Brightness"
-                                    minimum={10}
+                                    minimum={15}
                                     value={brightnessPercent}
                                     disabled={isSavingBrightness}
                                     isSaving={isSavingBrightness}

@@ -1,6 +1,26 @@
 import { runCommand } from "../../utils/runCommand.js";
 
 const BRIGHTNESS_VCP_CODE = "10";
+const MINIMUM_BRIGHTNESS_PERCENT = 15;
+const MAXIMUM_BRIGHTNESS_PERCENT = 100;
+
+function clampBrightnessPercentage(value) {
+    const parsedValue = Number(value);
+
+    if (!Number.isFinite(parsedValue)) {
+        throw new Error(
+            "Brightness percentage must be a valid number.",
+        );
+    }
+
+    return Math.min(
+        MAXIMUM_BRIGHTNESS_PERCENT,
+        Math.max(
+            MINIMUM_BRIGHTNESS_PERCENT,
+            Math.round(parsedValue),
+        ),
+    );
+}
 
 export async function getDisplayBrightness() {
     const { stdout } = await runCommand("ddcutil", [
@@ -27,7 +47,9 @@ export async function getDisplayBrightness() {
         !Number.isFinite(maximumValue) ||
         maximumValue <= 0
     ) {
-        throw new Error("Display returned an invalid brightness value.");
+        throw new Error(
+            "Display returned an invalid brightness value.",
+        );
     }
 
     return {
@@ -40,10 +62,13 @@ export async function getDisplayBrightness() {
 }
 
 export async function setDisplayBrightness(brightnessPercent) {
+    const safeBrightnessPercent =
+        clampBrightnessPercentage(brightnessPercent);
+
     const { maximumValue } = await getDisplayBrightness();
 
     const displayValue = Math.round(
-        (brightnessPercent / 100) * maximumValue,
+        (safeBrightnessPercent / 100) * maximumValue,
     );
 
     await runCommand("ddcutil", [
