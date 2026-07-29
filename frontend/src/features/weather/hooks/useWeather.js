@@ -1,8 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
 import { fetchWeatherForecast } from "../services/weatherService.js";
 
 const DEFAULT_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+const INITIAL_RETRY_INTERVAL_MS = 5 * 1000;
+const RECOVERY_RETRY_INTERVAL_MS = 60 * 1000;
 const MINIMUM_REFRESH_INTERVAL_MS = 60 * 1000;
 
 function getRefreshInterval(weather) {
@@ -42,9 +49,12 @@ function useWeather() {
                 }
 
                 weatherRef.current = forecast;
+
                 setWeather(forecast);
                 setErrorMessage("");
 
+                // After a successful request, refresh using the interval
+                // supplied by the backend. This is currently 10 minutes.
                 refreshTimeoutId = window.setTimeout(
                     loadWeather,
                     getRefreshInterval(forecast),
@@ -54,17 +64,26 @@ function useWeather() {
                     error.name !== "AbortError" &&
                     !requestController.signal.aborted
                 ) {
+                    const hasExistingWeather = Boolean(
+                        weatherRef.current,
+                    );
+
                     console.error("Unable to load weather:", error);
 
                     setErrorMessage(
-                        weatherRef.current
+                        hasExistingWeather
                             ? "Weather may be out of date."
-                            : "Weather is unavailable.",
+                            : "Weather is temporarily unavailable.",
                     );
 
+                    // The API may still be starting when Chromium first opens.
+                    // Retry quickly until the first forecast successfully loads.
+                    // After data has previously loaded, retry once per minute.
                     refreshTimeoutId = window.setTimeout(
                         loadWeather,
-                        DEFAULT_REFRESH_INTERVAL_MS,
+                        hasExistingWeather
+                            ? RECOVERY_RETRY_INTERVAL_MS
+                            : INITIAL_RETRY_INTERVAL_MS,
                     );
                 }
             } finally {
@@ -91,14 +110,16 @@ function useWeather() {
             const forecast = await fetchWeatherForecast();
 
             weatherRef.current = forecast;
+
             setWeather(forecast);
+            setErrorMessage("");
         } catch (error) {
             console.error("Unable to refresh weather:", error);
 
             setErrorMessage(
                 weatherRef.current
                     ? "Weather may be out of date."
-                    : "Weather is unavailable.",
+                    : "Weather is temporarily unavailable.",
             );
         } finally {
             setIsRefreshing(false);

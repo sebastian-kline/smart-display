@@ -32,7 +32,8 @@ function HomeWeatherWidget() {
             )}
       </span>
 
-            {weather?.metadata?.isStale || errorMessage ? (
+            {weather &&
+            (weather.metadata?.isStale || errorMessage) ? (
                 <span
                     className="home-weather-widget__stale"
                     aria-label="Weather data may be out of date"
