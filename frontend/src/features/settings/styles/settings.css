@@ -137,8 +137,66 @@
 
 .settings-panel__content {
     flex: 1;
+    min-height: 0;
+
+    overflow-x: hidden;
     overflow-y: auto;
+
     padding: 1.1rem 1.2rem 2rem;
+
+    overscroll-behavior-y: contain;
+
+    /*
+     * Firefox fallback.
+     */
+    scrollbar-width: thin;
+    scrollbar-color:
+            rgba(255, 255, 255, 0.28)
+            transparent;
+}
+
+/*
+ * Chromium scrollbar used on the Raspberry Pi.
+ */
+.settings-panel__content::-webkit-scrollbar {
+    width: 0.65rem;
+}
+
+.settings-panel__content::-webkit-scrollbar-track {
+    margin-block: 0.55rem;
+
+    background: rgba(255, 255, 255, 0.035);
+    border-radius: 999px;
+}
+
+.settings-panel__content::-webkit-scrollbar-thumb {
+    min-height: 3rem;
+
+    background: rgba(255, 255, 255, 0.25);
+    background-clip: padding-box;
+
+    border: 0.18rem solid transparent;
+    border-radius: 999px;
+}
+
+.settings-panel__content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.38);
+    background-clip: padding-box;
+}
+
+/*
+ * Removes the white up/down arrow buttons visible
+ * in Chromium's default scrollbar.
+ */
+.settings-panel__content::-webkit-scrollbar-button {
+    display: none;
+
+    width: 0;
+    height: 0;
+}
+
+.settings-panel__content::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 .settings-panel__message {

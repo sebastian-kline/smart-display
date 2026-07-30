@@ -9,21 +9,14 @@
     gap: 0.85rem;
 
     width: 100%;
-    max-height: calc(100dvh - 7.5rem);
-    padding: 0.15rem 0.2rem 1rem 0;
+    padding: 0.15rem 0 1rem;
 
-    overflow-x: hidden;
-    overflow-y: auto;
-
-    overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
-    touch-action: pan-y;
-
-    scrollbar-width: none;
-}
-
-.background-picker__list::-webkit-scrollbar {
-    display: none;
+    /*
+     * The Settings panel content handles vertical scrolling.
+     * This makes the main Settings screen and Background
+     * screen use the same customized scrollbar.
+     */
+    overflow: visible;
 }
 
 .background-picker__option {
@@ -36,7 +29,6 @@
     padding: 0;
 
     overflow: hidden;
-    scroll-snap-align: start;
 
     color: white;
     font: inherit;

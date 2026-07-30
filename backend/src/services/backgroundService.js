@@ -54,6 +54,6 @@ export async function getAvailableBackgrounds() {
                 entry.name,
             )}`,
             isDefault:
-                entry.name.toLowerCase() === "home.mp4",
+                entry.name.toLowerCase() === "pitt-skyline.mp4",
         }));
 }

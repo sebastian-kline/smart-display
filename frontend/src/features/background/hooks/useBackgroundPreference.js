@@ -5,7 +5,7 @@ import {
 } from "react";
 
 export const DEFAULT_BACKGROUND_SOURCE =
-    "/backgrounds/home.mp4";
+    "/backgrounds/pitt-skyline.mp4";
 
 const BACKGROUND_STORAGE_KEY =
     "smart-display:selected-background";
