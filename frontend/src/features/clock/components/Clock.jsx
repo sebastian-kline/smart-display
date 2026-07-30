@@ -48,7 +48,7 @@ function Clock() {
 
         return {
             time: `${hour}:${minute}`,
-            isAm: dayPeriod.toUpperCase() === "AM",
+            isPm: dayPeriod.toUpperCase() === "PM",
             accessibleTime:
                 `${hour}:${minute} ${dayPeriod}`.trim(),
         };
@@ -88,7 +88,7 @@ function Clock() {
                     {formattedTime.time}
                 </span>
 
-                {formattedTime.isAm ? (
+                {formattedTime.isPm ? (
                     <span
                         className="clock-display__period-dot"
                         aria-hidden="true"
