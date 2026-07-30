@@ -1,4 +1,7 @@
-import { useState } from "react";
+import {
+    useRef,
+    useState,
+} from "react";
 
 import { BackgroundPicker } from "../../background/index.js";
 import useSettingsControls from "../hooks/useSettingsControls.js";
@@ -104,6 +107,12 @@ function SettingsPanel({ onClose }) {
     const [activeView, setActiveView] =
         useState("settings");
 
+    const [isSystemUnlocked, setIsSystemUnlocked] =
+        useState(false);
+
+    const secretTapCountRef = useRef(0);
+    const secretTapTimeoutRef = useRef(null);
+
     const {
         brightnessPercent,
         volumePercent,
@@ -129,6 +138,25 @@ function SettingsPanel({ onClose }) {
 
     const isBackgroundView =
         activeView === "background";
+
+    function handleSecretTap() {
+        secretTapCountRef.current += 1;
+
+        window.clearTimeout(
+            secretTapTimeoutRef.current,
+        );
+
+        if (secretTapCountRef.current >= 5) {
+            setIsSystemUnlocked(true);
+            secretTapCountRef.current = 0;
+            return;
+        }
+
+        secretTapTimeoutRef.current =
+            window.setTimeout(() => {
+                secretTapCountRef.current = 0;
+            }, 2_000);
+    }
 
     async function handleExitKiosk() {
         setIsExiting(true);
@@ -184,6 +212,11 @@ function SettingsPanel({ onClose }) {
                         <h2
                             id="settings-title"
                             className="settings-panel__title"
+                            onPointerUp={
+                                isBackgroundView
+                                    ? undefined
+                                    : handleSecretTap
+                            }
                         >
                             {isBackgroundView
                                 ? "Background"
@@ -289,69 +322,71 @@ function SettingsPanel({ onClose }) {
                                 </button>
                             </section>
 
-                            <section className="settings-section">
-                                <h3 className="settings-section__title">
-                                    System
-                                </h3>
+                            {isSystemUnlocked ? (
+                                <section className="settings-section">
+                                    <h3 className="settings-section__title">
+                                        System
+                                    </h3>
 
-                                {!isConfirmingExit ? (
-                                    <button
-                                        className="settings-action settings-action--danger"
-                                        type="button"
-                                        onClick={() =>
-                                            setIsConfirmingExit(
-                                                true,
-                                            )
-                                        }
-                                    >
-                                        Exit kiosk mode
-                                    </button>
-                                ) : (
-                                    <div className="exit-confirmation">
-                                        <p className="exit-confirmation__message">
-                                            Exit to the Raspberry Pi desktop?
-                                        </p>
+                                    {!isConfirmingExit ? (
+                                        <button
+                                            className="settings-action settings-action--danger"
+                                            type="button"
+                                            onClick={() =>
+                                                setIsConfirmingExit(
+                                                    true,
+                                                )
+                                            }
+                                        >
+                                            Exit kiosk mode
+                                        </button>
+                                    ) : (
+                                        <div className="exit-confirmation">
+                                            <p className="exit-confirmation__message">
+                                                Exit to the Raspberry Pi desktop?
+                                            </p>
 
-                                        <div className="exit-confirmation__actions">
-                                            <button
-                                                className="settings-action"
-                                                type="button"
-                                                disabled={
-                                                    isExiting
-                                                }
-                                                onClick={() =>
-                                                    setIsConfirmingExit(
-                                                        false,
-                                                    )
-                                                }
-                                            >
-                                                Cancel
-                                            </button>
+                                            <div className="exit-confirmation__actions">
+                                                <button
+                                                    className="settings-action"
+                                                    type="button"
+                                                    disabled={
+                                                        isExiting
+                                                    }
+                                                    onClick={() =>
+                                                        setIsConfirmingExit(
+                                                            false,
+                                                        )
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
 
-                                            <button
-                                                className="settings-action settings-action--danger"
-                                                type="button"
-                                                disabled={
-                                                    isExiting
-                                                }
-                                                onClick={
-                                                    handleExitKiosk
-                                                }
-                                            >
-                                                {isExiting
-                                                    ? "Exiting…"
-                                                    : "Exit"}
-                                            </button>
+                                                <button
+                                                    className="settings-action settings-action--danger"
+                                                    type="button"
+                                                    disabled={
+                                                        isExiting
+                                                    }
+                                                    onClick={
+                                                        handleExitKiosk
+                                                    }
+                                                >
+                                                    {isExiting
+                                                        ? "Exiting…"
+                                                        : "Exit"}
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
-                                {exitError ? (
-                                    <p className="settings-panel__error">
-                                        {exitError}
-                                    </p>
-                                ) : null}
-                            </section>
+                                    {exitError ? (
+                                        <p className="settings-panel__error">
+                                            {exitError}
+                                        </p>
+                                    ) : null}
+                                </section>
+                            ) : null}
                         </>
                     )}
 

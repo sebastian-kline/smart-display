@@ -125,6 +125,9 @@
     margin: 0;
     font-size: 1.45rem;
     font-weight: 650;
+
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .settings-panel__close {
