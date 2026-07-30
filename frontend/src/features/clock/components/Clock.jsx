@@ -48,7 +48,7 @@ function Clock() {
 
         return {
             time: `${hour}:${minute}`,
-            isPm: dayPeriod.toUpperCase() === "PM",
+            isAm: dayPeriod.toUpperCase() === "AM",
             accessibleTime:
                 `${hour}:${minute} ${dayPeriod}`.trim(),
         };
@@ -84,13 +84,13 @@ function Clock() {
                 dateTime={currentDateTime.toISOString()}
                 aria-label={formattedTime.accessibleTime}
             >
-        <span className="clock-display__time-value">
-          {formattedTime.time}
-        </span>
+                <span className="clock-display__time-value">
+                    {formattedTime.time}
+                </span>
 
-                {formattedTime.isPm ? (
+                {formattedTime.isAm ? (
                     <span
-                        className="clock-display__pm-dot"
+                        className="clock-display__period-dot"
                         aria-hidden="true"
                     />
                 ) : null}

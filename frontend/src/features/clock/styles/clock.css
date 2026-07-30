@@ -26,10 +26,10 @@
 }
 
 /*
- * A raised dot replaces the usual PM label.
- * Nothing is displayed during AM hours.
+ * A raised dot replaces the usual AM label.
+ * Nothing is displayed during PM hours.
  */
-.clock-display__pm-dot {
+.clock-display__period-dot {
     flex: 0 0 auto;
 
     width: 0.13em;
