@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { BackgroundPicker } from "../../background/index.js";
 import useSettingsControls from "../hooks/useSettingsControls.js";
 import { exitKiosk } from "../services/settingsService.js";
 import RangeSetting from "./RangeSetting.jsx";
@@ -22,7 +23,87 @@ function CloseIcon() {
     );
 }
 
+function BackIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <path
+                d="m15 18-6-6 6-6"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            />
+        </svg>
+    );
+}
+
+function BackgroundIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <rect
+                x="3"
+                y="4"
+                width="18"
+                height="16"
+                rx="2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+            />
+
+            <circle
+                cx="8"
+                cy="9"
+                r="1.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+            />
+
+            <path
+                d="m4 17 4.5-4.5 3.2 3.2 2.5-2.5L20 19"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.7"
+            />
+        </svg>
+    );
+}
+
+function ChevronIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <path
+                d="m9 6 6 6-6 6"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            />
+        </svg>
+    );
+}
+
 function SettingsPanel({ onClose }) {
+    const [activeView, setActiveView] =
+        useState("settings");
+
     const {
         brightnessPercent,
         volumePercent,
@@ -39,8 +120,15 @@ function SettingsPanel({ onClose }) {
 
     const [isConfirmingExit, setIsConfirmingExit] =
         useState(false);
-    const [isExiting, setIsExiting] = useState(false);
-    const [exitError, setExitError] = useState("");
+
+    const [isExiting, setIsExiting] =
+        useState(false);
+
+    const [exitError, setExitError] =
+        useState("");
+
+    const isBackgroundView =
+        activeView === "background";
 
     async function handleExitKiosk() {
         setIsExiting(true);
@@ -49,8 +137,15 @@ function SettingsPanel({ onClose }) {
         try {
             await exitKiosk();
         } catch (error) {
-            console.error("Unable to exit kiosk mode:", error);
-            setExitError("Unable to exit kiosk mode.");
+            console.error(
+                "Unable to exit kiosk mode:",
+                error,
+            );
+
+            setExitError(
+                "Unable to exit kiosk mode.",
+            );
+
             setIsExiting(false);
         }
     }
@@ -65,15 +160,36 @@ function SettingsPanel({ onClose }) {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="settings-title"
-                onPointerDown={(event) => event.stopPropagation()}
+                onPointerDown={(event) =>
+                    event.stopPropagation()
+                }
             >
                 <header className="settings-panel__header">
-                    <h2
-                        id="settings-title"
-                        className="settings-panel__title"
-                    >
-                        Settings
-                    </h2>
+                    <div className="settings-panel__heading">
+                        {isBackgroundView ? (
+                            <button
+                                className="settings-panel__back"
+                                type="button"
+                                aria-label="Back to settings"
+                                onClick={() =>
+                                    setActiveView(
+                                        "settings",
+                                    )
+                                }
+                            >
+                                <BackIcon />
+                            </button>
+                        ) : null}
+
+                        <h2
+                            id="settings-title"
+                            className="settings-panel__title"
+                        >
+                            {isBackgroundView
+                                ? "Background"
+                                : "Settings"}
+                        </h2>
+                    </div>
 
                     <button
                         className="settings-panel__close"
@@ -86,7 +202,9 @@ function SettingsPanel({ onClose }) {
                 </header>
 
                 <div className="settings-panel__content">
-                    {isLoading ? (
+                    {isBackgroundView ? (
+                        <BackgroundPicker />
+                    ) : isLoading ? (
                         <p className="settings-panel__message">
                             Loading settings…
                         </p>
@@ -102,10 +220,18 @@ function SettingsPanel({ onClose }) {
                                     label="Brightness"
                                     minimum={15}
                                     value={brightnessPercent}
-                                    disabled={isSavingBrightness}
-                                    isSaving={isSavingBrightness}
-                                    onChange={setBrightnessPercent}
-                                    onCommit={commitBrightness}
+                                    disabled={
+                                        isSavingBrightness
+                                    }
+                                    isSaving={
+                                        isSavingBrightness
+                                    }
+                                    onChange={
+                                        setBrightnessPercent
+                                    }
+                                    onCommit={
+                                        commitBrightness
+                                    }
                                 />
                             </section>
 
@@ -118,11 +244,49 @@ function SettingsPanel({ onClose }) {
                                     id="volume-setting"
                                     label="Volume"
                                     value={volumePercent}
-                                    disabled={isSavingVolume}
-                                    isSaving={isSavingVolume}
-                                    onChange={setVolumePercent}
-                                    onCommit={commitVolume}
+                                    disabled={
+                                        isSavingVolume
+                                    }
+                                    isSaving={
+                                        isSavingVolume
+                                    }
+                                    onChange={
+                                        setVolumePercent
+                                    }
+                                    onCommit={
+                                        commitVolume
+                                    }
                                 />
+                            </section>
+
+                            <section className="settings-section">
+                                <h3 className="settings-section__title">
+                                    Appearance
+                                </h3>
+
+                                <button
+                                    className="settings-navigation"
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveView(
+                                            "background",
+                                        )
+                                    }
+                                >
+                                    <BackgroundIcon />
+
+                                    <span className="settings-navigation__text">
+                                        <strong>
+                                            Background
+                                        </strong>
+
+                                        <span>
+                                            Choose animated background
+                                        </span>
+                                    </span>
+
+                                    <ChevronIcon />
+                                </button>
                             </section>
 
                             <section className="settings-section">
@@ -134,7 +298,11 @@ function SettingsPanel({ onClose }) {
                                     <button
                                         className="settings-action settings-action--danger"
                                         type="button"
-                                        onClick={() => setIsConfirmingExit(true)}
+                                        onClick={() =>
+                                            setIsConfirmingExit(
+                                                true,
+                                            )
+                                        }
                                     >
                                         Exit kiosk mode
                                     </button>
@@ -148,9 +316,13 @@ function SettingsPanel({ onClose }) {
                                             <button
                                                 className="settings-action"
                                                 type="button"
-                                                disabled={isExiting}
+                                                disabled={
+                                                    isExiting
+                                                }
                                                 onClick={() =>
-                                                    setIsConfirmingExit(false)
+                                                    setIsConfirmingExit(
+                                                        false,
+                                                    )
                                                 }
                                             >
                                                 Cancel
@@ -159,10 +331,16 @@ function SettingsPanel({ onClose }) {
                                             <button
                                                 className="settings-action settings-action--danger"
                                                 type="button"
-                                                disabled={isExiting}
-                                                onClick={handleExitKiosk}
+                                                disabled={
+                                                    isExiting
+                                                }
+                                                onClick={
+                                                    handleExitKiosk
+                                                }
                                             >
-                                                {isExiting ? "Exiting…" : "Exit"}
+                                                {isExiting
+                                                    ? "Exiting…"
+                                                    : "Exit"}
                                             </button>
                                         </div>
                                     </div>
@@ -177,7 +355,8 @@ function SettingsPanel({ onClose }) {
                         </>
                     )}
 
-                    {errorMessage ? (
+                    {!isBackgroundView &&
+                    errorMessage ? (
                         <div className="settings-error">
                             <p>{errorMessage}</p>
 

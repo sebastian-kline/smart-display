@@ -4,6 +4,7 @@ import {
     errorHandler,
     notFoundHandler,
 } from "./middleware/errorHandlers.js";
+import backgroundRouter from "./routes/backgroundRoutes.js";
 import systemRouter from "./routes/systemRoutes.js";
 import weatherRouter from "./routes/weatherRoutes.js";
 
@@ -23,6 +24,7 @@ app.get("/api/health", (_request, response) => {
     });
 });
 
+app.use("/api/backgrounds", backgroundRouter);
 app.use("/api/system", systemRouter);
 app.use("/api/weather", weatherRouter);
 
